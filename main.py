@@ -1,6 +1,6 @@
 import os
 import httpx
-
+import logging
 
 USER_AGENT = (
     "Mozilla/5.0 (Linux; Android 10; Pixel 3) AppleWebKit/537.36 "
@@ -34,7 +34,9 @@ async def signin(cookies):
             "https://www.nssctf.cn/api/user/clockin/",
             headers={"User-Agent": USER_AGENT},
         )
-        return resp.json()["code"] == 200
+        data = resp.json()
+        logging.warning(data)
+        return ["code"] == 200
 
 
 async def coin_num(cookies):
@@ -44,6 +46,7 @@ async def coin_num(cookies):
             headers={"User-Agent": USER_AGENT},
         )
         data = resp.json()
+        logging.warning(data)
         if data["code"] != 200:
             return None
         return data.get("data", {}).get("coin", None)
@@ -52,4 +55,4 @@ async def main():
     cookies = await login()
     await signin(cookies)
     coin_num = await coin_num(cookies)
-    
+    print(coin_num)
