@@ -1,6 +1,7 @@
 import os
-import httpx
+import asyncio
 import logging
+import httpx
 
 USER_AGENT = (
     "Mozilla/5.0 (Linux; Android 10; Pixel 3) AppleWebKit/537.36 "
@@ -34,19 +35,21 @@ async def signin(cookies):
             "https://www.nssctf.cn/api/user/clockin/",
             headers={"User-Agent": USER_AGENT},
         )
+        logging.warning(resp.text)
         data = resp.json()
-        logging.warning(data)
-        return ["code"] == 200
+        return data["code"] == 200
 
 
 async def coin_num(cookies):
     async with httpx.AsyncClient(cookies=cookies) as client:
-        resp = await client.post(
+        resp = await client.get(
             "https://www.nssctf.cn/api/user/info/opt/setting/",
             headers={"User-Agent": USER_AGENT},
         )
+        logging.warning(resp.text)
+
         data = resp.json()
-        logging.warning(data)
+
         if data["code"] != 200:
             return None
         return data.get("data", {}).get("coin", None)
@@ -54,5 +57,8 @@ async def coin_num(cookies):
 async def main():
     cookies = await login()
     await signin(cookies)
-    coin_num = await coin_num(cookies)
-    print(coin_num)
+    num = await coin_num(cookies)
+    print(num)
+
+if __name__ == "__main__":
+    asyncio.run(main())
