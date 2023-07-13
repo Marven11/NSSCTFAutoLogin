@@ -3,6 +3,7 @@ name: Run
 on:
   schedule:
      - cron: "12 3 * * *"
+  push:
 permissions:
   contents: read
 
@@ -20,7 +21,7 @@ jobs:
     - name: Install packages
       run: |
         python -m pip install --upgrade pip
-        pip install -r httpx
+        pip install httpx
     - name: Run
       env:
         NSSCTF_USERNAME: ${{ secrets.NSSCTF_USERNAME }}
